@@ -1,5 +1,9 @@
 {
     // Show clang-tidy findings as squiggles in the editor, as you type.
+    // cpptools 1.33.8 ships LLVM/bin/clang-tidy with NO lib/clang resource
+    // tree, so it cannot find builtin headers (stddef.h) and every file
+    // errors in wchar.h. Use the system clang-tidy, which is complete.
+    "C_Cpp.codeAnalysis.clangTidy.path": "/usr/bin/clang-tidy",
     "C_Cpp.codeAnalysis.clangTidy.enabled": true,
     "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
     "C_Cpp.codeAnalysis.runAutomatically": true,

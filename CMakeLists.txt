@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 project(cpp_tutorial LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)          # c++20, not gnu++20
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)  # feeds clang-tidy, cppcheck, IntelliSense

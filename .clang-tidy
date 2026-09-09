@@ -20,6 +20,11 @@ WarningsAsErrors: ''
 HeaderFilterRegex: '.*'
 FormatStyle: file
 
+# Clang-only warnings, for the live editor squiggles. GCC rejects these
+# outright, so they cannot live in CMakeLists.txt. -Wshadow-all adds
+# -Wshadow-field-in-constructor, which GCC's -Wshadow has but clang's lacks.
+ExtraArgs: ["-Wshadow-all"]
+
 CheckOptions:
   - key: readability-braces-around-statements.ShortStatementLines
     value: '1'
