@@ -1,0 +1,14 @@
+{
+    // Show clang-tidy findings as squiggles in the editor, as you type.
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
+    "C_Cpp.codeAnalysis.runAutomatically": true,
+    "C_Cpp.formatting": "clangFormat",
+    "C_Cpp.default.cppStandard": "c++20",
+
+    // Format on demand (Shift+Alt+F), not on save -- so your code keeps
+    // matching the course video until you choose to reformat it.
+    "editor.formatOnSave": false,
+
+    "files.exclude": { "**/build": true }
+}

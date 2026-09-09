@@ -1,0 +1,75 @@
+{
+    "version": "2.0.0",
+    "options": { "cwd": "${workspaceFolder}" },
+    "presentation": { "clear": true, "panel": "shared" },
+    "tasks": [
+        {
+            "label": "cmake: configure",
+            "type": "shell",
+            "command": "cmake -S . -B build/debug -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=ON",
+            "problemMatcher": []
+        },
+        {
+            "label": "build current lesson",
+            "type": "shell",
+            "command": "cmake --build build/debug --target ${relativeFileDirname}",
+            "dependsOn": ["cmake: configure"],
+            "dependsOrder": "sequence",
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "run current lesson",
+            "type": "shell",
+            "command": "./build/debug/${relativeFileDirname}",
+            "dependsOn": ["build current lesson"],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "build all lessons",
+            "type": "shell",
+            "command": "cmake --build build/debug",
+            "dependsOn": ["cmake: configure"],
+            "dependsOrder": "sequence",
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "clang-tidy: current file",
+            "type": "shell",
+            "command": "clang-tidy -p build/debug ${file}",
+            "dependsOn": ["cmake: configure"],
+            "dependsOrder": "sequence",
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "clang-tidy: all lessons",
+            "type": "shell",
+            "command": "clang-tidy -p build/debug $(find lesson_* -name '*.cpp')",
+            "dependsOn": ["cmake: configure"],
+            "dependsOrder": "sequence",
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "clang-format: current file (in place)",
+            "type": "shell",
+            "command": "clang-format -i ${file}",
+            "problemMatcher": []
+        },
+        {
+            "label": "cppcheck: all lessons",
+            "type": "shell",
+            "command": "cppcheck --project=build/debug/compile_commands.json --enable=all --inline-suppr --suppress=missingIncludeSystem --suppress=checkersReport",
+            "dependsOn": ["cmake: configure"],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "valgrind: current lesson",
+            "detail": "Separate non-sanitizer build -- ASan and Valgrind cannot coexist.",
+            "type": "shell",
+            "command": "cmake -S . -B build/valgrind -G Ninja -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=OFF && cmake --build build/valgrind --target ${relativeFileDirname} && valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./build/valgrind/${relativeFileDirname}",
+            "problemMatcher": []
+        }
+    ]
+}
