@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -8,20 +9,20 @@ void print(const vector<int>& vec) {
     for (auto v: vec) {
         cout << v << ", ";
     }
-    cout << endl;
+    cout << "\n";
 }
 
 using IntMatrix = vector<vector<int>>;
 
 int main() {
-    int x{7};
-    string s{"Let us begin"};
+    const int x{7};
+    const string s{"Let us begin"};
 
-    cout << "x = " << x << endl;
-    cout << "s = \"" <<  s << "\"" << endl;
+    cout << "x = " << x << "\n";
+    cout << "s = \"" <<  s << "\"\n";
 
-    vector<int> vec{1, 2, 8, 4, 7, 0};
-    IntMatrix matrix;
+    const vector<int> vec{1, 2, 8, 4, 7, 0};
+    const IntMatrix matrix;
 
     print(vec);
 }
