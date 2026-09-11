@@ -24,7 +24,25 @@ cmake --build build/debug --target lesson_2 && ./build/debug/lesson_2
 
 Editor shortcuts (file inside the lesson must be open): `Ctrl+X Ctrl+S` save +
 build, `Ctrl+Shift+B` build, `F5` gdb, `Ctrl+Shift+P` → Run Task → run /
-clang-tidy / cppcheck / clang-format / valgrind.
+test / clang-tidy / cppcheck / clang-format / valgrind.
+
+## Tests (GoogleTest)
+
+`lesson_N/*_test.cpp` is excluded from the lesson executable and compiled into
+`lesson_N_test` together with the lesson's other sources **minus `main.cpp`**,
+linked to `GTest::gtest_main` and the same sanitizer flags, and registered
+with CTest. So testable logic goes in `lesson_N/foo.hpp`/`foo.cpp`, and
+`main.cpp` stays a thin driver.
+
+```bash
+cmake --build build/debug --target lesson_4_gol_test && ./build/debug/lesson_4_gol_test
+ctest --test-dir build/debug --output-on-failure     # everything
+```
+
+GoogleTest is fetched by `FetchContent` (pinned tag in `CMakeLists.txt`) into
+`build/<cfg>/_deps` on first configure — needs network once per build dir.
+On the ESP32 the on-target tests will use ESP-IDF's Unity instead; GoogleTest
+is for host-side tests of platform-independent logic.
 
 - Standard is **C++20** (`CMakeLists.txt`, `.vscode/*.json` all agree). Keep
   them in sync. GCC 13 has no `<print>`, so no C++23.

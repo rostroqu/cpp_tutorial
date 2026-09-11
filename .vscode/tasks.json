@@ -27,6 +27,24 @@
             "problemMatcher": []
         },
         {
+            "label": "test current lesson",
+            "detail": "Builds <lesson>_test from *_test.cpp and runs it directly (gtest output).",
+            "type": "shell",
+            "command": "cmake --build build/debug --target ${relativeFileDirname}_test && ./build/debug/${relativeFileDirname}_test",
+            "dependsOn": ["cmake: configure"],
+            "dependsOrder": "sequence",
+            "group": { "kind": "test", "isDefault": true },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "ctest: all lessons",
+            "type": "shell",
+            "command": "cmake --build build/debug && ctest --test-dir build/debug --output-on-failure",
+            "dependsOn": ["cmake: configure"],
+            "dependsOrder": "sequence",
+            "problemMatcher": ["$gcc"]
+        },
+        {
             "label": "build all lessons",
             "type": "shell",
             "command": "cmake --build build/debug",
@@ -59,7 +77,7 @@
         {
             "label": "cppcheck: all lessons",
             "type": "shell",
-            "command": "cppcheck --project=build/debug/compile_commands.json --enable=all --inline-suppr --suppress=missingIncludeSystem --suppress=checkersReport",
+            "command": "cppcheck --project=build/debug/compile_commands.json --enable=all --inline-suppr --suppress=missingIncludeSystem --suppress=checkersReport -ibuild/",
             "dependsOn": ["cmake: configure"],
             "dependsOrder": "sequence",
             "problemMatcher": []

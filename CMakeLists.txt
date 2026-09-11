@@ -52,7 +52,27 @@ if(ENABLE_CLANG_TIDY)
 endif()
 
 # --------------------------------------------------------------------------
+# GoogleTest, fetched at configure time into build/<cfg>/_deps. Pinned to a
+# release tag so a rebuild a year from now gets the same code.
+# --------------------------------------------------------------------------
+include(FetchContent)
+FetchContent_Declare(googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        v1.17.0
+    GIT_SHALLOW    TRUE)
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+include(GoogleTest)   # gtest_discover_tests()
+enable_testing()
+
+# --------------------------------------------------------------------------
 # One executable per lesson_* directory. New lessons need no edits here.
+#
+#   lesson_N/*.cpp        -> executable  lesson_N
+#   lesson_N/*_test.cpp   -> executable  lesson_N_test  (GoogleTest, CTest)
+#
+# The test target gets every non-test source except main.cpp, so the logic
+# under test must live outside main.cpp (two main()s cannot link).
 # --------------------------------------------------------------------------
 file(GLOB lesson_dirs RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
      CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/lesson_*")
@@ -63,10 +83,24 @@ foreach(lesson IN LISTS lesson_dirs)
     endif()
     file(GLOB lesson_srcs CONFIGURE_DEPENDS
          "${CMAKE_CURRENT_SOURCE_DIR}/${lesson}/*.cpp")
-    if(NOT lesson_srcs)
-        continue()
+    file(GLOB lesson_tests CONFIGURE_DEPENDS
+         "${CMAKE_CURRENT_SOURCE_DIR}/${lesson}/*_test.cpp")
+    if(lesson_tests)
+        list(REMOVE_ITEM lesson_srcs ${lesson_tests})
     endif()
-    add_executable(${lesson} ${lesson_srcs})
-    target_link_libraries(${lesson} PRIVATE tutorial_flags)
-    message(STATUS "lesson target: ${lesson}")
+
+    if(lesson_srcs)
+        add_executable(${lesson} ${lesson_srcs})
+        target_link_libraries(${lesson} PRIVATE tutorial_flags)
+        message(STATUS "lesson target: ${lesson}")
+    endif()
+
+    if(lesson_tests)
+        set(lesson_lib_srcs ${lesson_srcs})
+        list(FILTER lesson_lib_srcs EXCLUDE REGEX "/main\\.cpp$")
+        add_executable(${lesson}_test ${lesson_tests} ${lesson_lib_srcs})
+        target_link_libraries(${lesson}_test PRIVATE tutorial_flags GTest::gtest_main)
+        gtest_discover_tests(${lesson}_test)
+        message(STATUS "test target:   ${lesson}_test")
+    endif()
 endforeach()
