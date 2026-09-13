@@ -14,5 +14,10 @@
     // matching the course video until you choose to reformat it.
     "editor.formatOnSave": false,
 
-    "files.exclude": { "**/build": true }
+    "files.exclude": {
+        "**/build": true
+    },
+    "C_Cpp.codeAnalysis.clangTidy.checks.disabled": [
+        "bugprone-easily-swappable-parameters"
+    ]
 }
