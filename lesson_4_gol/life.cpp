@@ -1,8 +1,27 @@
 #include "life.hpp"
 #include <vector>
+#include <utility>
+#include <vector>
+#include <cstddef>
 
 
 namespace life {
+    World::World(Grid_t initial) :
+            curr(std::move(initial)),
+            next(curr.size(), std::vector<Cell_t>(curr.empty() ? 0 : curr[0].size())) {}
+
+    void World::step() {
+        for (std::size_t r = 0; r < curr.size(); ++r) {
+            for (std::size_t c = 0; c < curr[r].size(); ++c) {
+                next[r][c] = nextState(curr[r][c], liveNeighbours(curr, r, c));
+            }
+        }
+        std::swap(curr, next);
+    }
+    const Grid_t& World::current() const {
+        return curr;
+    }
+
     Cell_t nextState(Cell_t cell, int noOfNeighbors) {
         if (cell) {
             return noOfNeighbors == 2 || noOfNeighbors == 3;
